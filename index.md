@@ -1,37 +1,132 @@
-## Welcome to GitHub Pages
+## JNet 库
 
-You can use the [editor on GitHub](https://github.com/NetCapture/JNet/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
 
-### Markdown
+[English Version Document](./en_index.md)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+这是一个可用于安卓和Java的网络请求库。封装支持部分平台，如github、gitee.
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
+### 编译方法
 
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+``` shell
+mvn install
 ```
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
+### 调用方式
 
-### Jekyll Themes
+> 支持maven和gradle
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/NetCapture/JNet/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+* **maven集成**
 
-### Support or Contact
+``` xml
+<!-- https://mvnrepository.com/artifact/com.github.netcapture/Jnt -->
+<!-- https://repo1.maven.org/maven2/com/github/netcapture/Jnt/ -->
+<dependency>
+    <groupId>com.github.netcapture</groupId>
+    <artifactId>Jnt</artifactId>
+    <version>2.2.3</version>
+</dependency>
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+```
+
+* **gradle集成**
+
+``` groovy
+implementation 'com.github.netcapture:Jnt:2.2.3'
+```
+
+#### api类型
+
+api含两种:
+
+* 直接返回请求的结果，此时如网络请求成功(200),返回response text,否则返回error log ,若仍为空，则返回output log, 系列API:
+
+``` java
+//  http get request
+Jnt.get
+//  http post request
+Jnt.post
+//  http custom request
+Jnt.request
+
+//new api
+NJnt.xx.get()
+
+```
+
+* 直接返回请求的response, response含状态值，HTTP response HEADER等值，系列API：
+
+``` java
+
+//  http get request
+Jnt.getResp
+//  http post request
+Jnt.postResp
+//  http custom request
+Jnt.requestResp
+```
+
+#### 支持平台的API
+
+* github api
+
+``` java
+// 新建文件
+GithubHelper.createFile
+// 更新文件
+GithubHelper.updateContent
+// 追加内容
+GithubHelper.append
+// 查询文件的sha值
+GithubHelper.getSha
+// 删除文件
+GithubHelper.deleteFile
+```
+
+* gitee api
+
+``` java
+GiteeHelper.createFile
+GiteeHelper.updateContent
+GiteeHelper.getSha
+GiteeHelper.deleteFile
+```
+
+* github 已经支持shell上传
+
+该部分api从[uploadGithub](https://github.com/hhhaiai/uploadGithub/)摘录,支持用法如下：
+
+``` 
+github 用法:
+	-o:	github[用户]名字
+	-u:	github[用户]名字
+	-r:	github[项目]名称
+	-s:	github[上传目录]名称
+	-p:	github[目标文件]名称
+	-f:	github即将上传的本地文件名
+	-t:	github 个人 token
+	-c:	github上传[未base64]内容
+	-b:	github上传[已base64]内容
+	-m:	github上传commit内容
+	-a:	github上传使用的用户名字(auther)
+	-l:	github上传使用的邮箱名称
+```
+
+示例用法，已用于生产环境
+
+``` shell
+java -jar uploadGithubService-1.1-jar-with-dependencies.jar  
+    -owner hhhaiai -repo Git_result 
+    -target-dir-full-name  $upload_file_name 
+    -native-file ${file_name}  
+    -token ${{ secrets.GTOKEN }} 
+    -commit-messge  "GitHubAction: Build&Monkey ${{ github.repository }} Job ${{ github.job }}, created by ${{ github.workflow }} " 
+    -commit-auther "GitHubAction"
+    -commit-email "sanbo.xyz@gmail.com"
+```
+
+#### 用于项目
+
+* [uploadGithub](https://github.com/hhhaiai/uploadGithub)
