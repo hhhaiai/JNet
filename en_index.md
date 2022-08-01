@@ -24,7 +24,7 @@ mvn install
 <dependency>
     <groupId>com.github.netcapture</groupId>
     <artifactId>Jnt</artifactId>
-    <version>2.2.3</version>
+    <version>2.2.4</version>
 </dependency>
 
 ```
@@ -32,7 +32,7 @@ mvn install
 * **gradle**
 
 ``` groovy
-implementation 'com.github.netcapture:Jnt:2.2.3'
+implementation 'com.github.netcapture:Jnt:2.2.4'
 ```
 
 
