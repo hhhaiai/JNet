@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @Copyright © 2020 sanbo Inc. All rights reserved.
  * @Description: github API操作工具类， github
- *               api:https://developer.github.com/v3/repos/contents/
+ * api:https://developer.github.com/v3/repos/contents/
  * @Version: 1.0
  * @Create: 2020-12-09 15:13:01
  * @Author: sanbo
@@ -28,19 +28,21 @@ public class GithubHelper {
     private static String token = System.getenv("GITHUB_TOKEN");
 
     public static void main(String[] args) {
-        // delete
-        deleteFile("hhhaiai", "testAPP", "/test.txt", "清理文件,测试开始");
-        // create
-        createFile("hhhaiai", "testAPP", "/test.txt", "新建" + System.currentTimeMillis(), "新增文件");
-        // udpate
-        updateContent("hhhaiai", "testAPP", "/test.txt", "修改" + System.currentTimeMillis(), "修改文件");
-        // append
-        append("hhhaiai", "testAPP", "/test.txt", "追加" + System.currentTimeMillis(), "追加修改");
-        // getinf
-        String info = getContent("hhhaiai", "testAPP", "/test.txt");
-        System.out.println("查询:" + info);
-        // delete
-        deleteFile("hhhaiai", "testAPP", "/test.txt", "删除文件，测试完成");
+
+        deleteDir("hhhaiai", "Git_result", "/ci", "clear");
+//        // delete
+//        deleteFile("hhhaiai", "testAPP", "/test.txt", "清理文件,测试开始");
+//        // create
+//        createFile("hhhaiai", "testAPP", "/test.txt", "新建" + System.currentTimeMillis(), "新增文件");
+//        // udpate
+//        updateContent("hhhaiai", "testAPP", "/test.txt", "修改" + System.currentTimeMillis(), "修改文件");
+//        // append
+//        append("hhhaiai", "testAPP", "/test.txt", "追加" + System.currentTimeMillis(), "追加修改");
+//        // getinf
+//        String info = getContent("hhhaiai", "testAPP", "/test.txt");
+//        System.out.println("查询:" + info);
+//        // delete
+//        deleteFile("hhhaiai", "testAPP", "/test.txt", "删除文件，测试完成");
 
     }
 
@@ -203,26 +205,24 @@ public class GithubHelper {
         // String uploadUrl = String.format(base, owner, repo, path);
         Map<String, ShaInfo> shas = getSha(owner, repo, path, token);
         if (shas == null || shas.size() < 1) {
+            System.out.println("shas is null,will return");
             return;
         }
 
-        if (shas.size() > 0) {
-            // 编译删除文件夹中文件
-            for (Map.Entry<String, ShaInfo> entry : shas.entrySet()) {
-                ShaInfo s = entry.getValue();
-                if (s != null) {
-                    String ps = s.path.startsWith("/") ? (s.path) : ("/" + s.path);
-                    //// type: file、dir
-                    if ("file".endsWith(s.type)) {
-                        realDelFileBySha(String.format(base, owner, repo, ps), s.sha, token, commitMsg, username,
-                                email);
-                    } else {
-                        deleteDir(owner, repo, ps, token, commitMsg, username, email);
-                    }
+        // 编译删除文件夹中文件
+        for (Map.Entry<String, ShaInfo> entry : shas.entrySet()) {
+            ShaInfo s = entry.getValue();
+            if (s != null) {
+                String ps = s.path.startsWith("/") ? (s.path) : ("/" + s.path);
+                //// type: file、dir
+                if ("file".endsWith(s.type)) {
+                    realDelFileBySha(String.format(base, owner, repo, ps), s.sha, token, commitMsg, username,
+                            email);
+                } else {
+                    deleteDir(owner, repo, ps, token, commitMsg, username, email);
                 }
             }
         }
-
     }
 
     private static String realDelFileBySha(String url, String sha, String token, String commitMsg, String username,
@@ -450,10 +450,10 @@ public class GithubHelper {
     /**
      * @Copyright © 2022 sanbo Inc. All rights reserved.
      * @Description: sha获取模型，需要考虑兼容几种方式:
-     *               文件夹path获取的文件、文件夹path获取的文件夹、文件path获取的文件。样例数据如下:
-     *               <p>
-     *               1. 文件夹path请求的文件、文件夹
-     *               <code>
+     * 文件夹path获取的文件、文件夹path获取的文件夹、文件path获取的文件。样例数据如下:
+     * <p>
+     * 1. 文件夹path请求的文件、文件夹
+     * <code>
      * [
      * {
      * "name": "124113-CheckDemo-dev-sdk",
@@ -489,9 +489,9 @@ public class GithubHelper {
      * }
      * ]
      * </code>
-     *               <p>
-     *               2. 文件path请求的文件
-     *               <code>
+     * <p>
+     * 2. 文件path请求的文件
+     * <code>
      * {
      * "name":"CheckDemo_122109_spoon-24-google_apis-x86_64.tgz",
      * "path":"ci/20211229/CheckDemo_122109_spoon-24-google_apis-x86_64.tgz",
